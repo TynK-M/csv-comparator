@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "compare"
+version = "0.1.0"
+description = "CSV comparator CLI tool."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "TynK-M" }
+]
+
+dependencies = [
+    "typer[all]>=0.12.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/TynK-M/csv-comparator"
+
+[project.scripts]
+compare = "compare.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
