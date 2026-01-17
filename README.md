@@ -1,3 +1,5 @@
+[![License: MIT](https://img.shields.io/badge/License-MIT-greem.svg)](https://opensource.org/licenses/MIT)
+
 # CSV Comparator
 
 A small Python CLI to compare CSV files and report where they have the same values, rows and columns.
