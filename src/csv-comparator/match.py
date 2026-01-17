@@ -7,7 +7,7 @@ from rich.console import Console
 console = Console()
 err_console = Console(stderr=True)
 
-def compare(
+def match(
         first_csv: Annotated[Path, typer.Argument(help="Path to the first CSV file")] = None,
         second_csv: Annotated[Path, typer.Argument(help="Path to the second CSV file")] = None,
         fcsv: Annotated[Path | None, typer.Option("-fcsv", "--first-csv", help="Optional flag to specify the first CSV file")] = None,
@@ -22,7 +22,7 @@ def compare(
         err_console.print("[bold red]Error: you must provide two CSV files, either positionally or via flags[/bold red]")
         raise typer.Exit(code=1)
 
-    console.print(f"[bold green]Comparing `{first_csv}` with `{second_csv}`...[/bold green]")
+    console.print(f"[bold green]Matching `{first_csv}` with `{second_csv}`...[/bold green]")
 
     first_csv_content = None
     second_csv_content = None
@@ -34,7 +34,7 @@ def compare(
         second_csv_content = second_csv_file.read()
 
     if not first_csv_content or not second_csv_content:
-        err_console.print("[bold red]Error: could not compare when one of the files is empty[/bold red]")
+        err_console.print("[bold red]Error: could not match when one of the files is empty[/bold red]")
         raise typer.Exit(code=1)
 
     if debug:
