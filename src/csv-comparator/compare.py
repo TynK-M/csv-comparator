@@ -7,7 +7,7 @@ from rich.console import Console
 console = Console()
 err_console = Console(stderr=True)
 
-def match(
+def compare(
         first_csv: Annotated[Path, typer.Argument(help="Path to the first CSV file")] = None,
         second_csv: Annotated[Path, typer.Argument(help="Path to the second CSV file")] = None,
         fcsv: Annotated[Path | None, typer.Option("-fcsv", "--first-csv", help="Optional flag to specify the first CSV file")] = None,
