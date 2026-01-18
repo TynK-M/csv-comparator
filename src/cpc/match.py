@@ -1,5 +1,6 @@
 import typer
 import os
+import csv
 from typing_extensions import Annotated
 from pathlib import Path
 from rich.console import Console
@@ -28,14 +29,22 @@ def match(
 
     console.print(f"[bold green]Matching `{first_csv}` with `{second_csv}`...[/bold green]")
 
-    first_csv_content = None
-    second_csv_content = None
+    first_csv_content = ""
+    second_csv_content = ""
+    first_csv_rows = []
+    second_csv_rows = []
 
     with open(first_csv, 'r') as first_csv_file:
-        first_csv_content = first_csv_file.read()
+        first_csv_reader = csv.reader(first_csv_file, delimiter=separator)
+        for row in first_csv_reader:
+            first_csv_content += f"{separator}".join(row) + "\n"
+            first_csv_rows.append(row)
 
     with open(second_csv, 'r') as second_csv_file:
-        second_csv_content = second_csv_file.read()
+        second_csv_reader = csv.reader(second_csv_file, delimiter=separator)
+        for row in second_csv_reader:
+            second_csv_content += f"{separator}".join(row) + "\n"
+            second_csv_rows.append(row)
 
     if not first_csv_content or not second_csv_content:
         err_console.print("[bold red]Error: could not match when one of the files is empty[/bold red]")
@@ -44,6 +53,4 @@ def match(
     if debug:
         console.print(f"First CSV content:\n[yellow]{first_csv_content}[/yellow]")
         console.print(f"Second CSV content:\n[yellow]{second_csv_content}[/yellow]")
-
-
 
