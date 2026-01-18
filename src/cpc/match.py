@@ -1,9 +1,11 @@
 import typer
 import os
 import csv
+import collections
 from typing_extensions import Annotated
 from pathlib import Path
 from rich.console import Console
+from .utils.terminal import print_separator
 
 console = Console()
 err_console = Console(stderr=True)
@@ -19,6 +21,7 @@ def match(
         no_footer: Annotated[bool, typer.Option("-nf", "--no-footer", help="Optional flag to specify if there is no footer in the CSV files")] = False,
         separator: Annotated[str, typer.Option("-sep", "--separator", help="Optional flag to specify the separator used by the CSV files, default to ','")] = ','
 ) -> None:
+    print_separator(console)
     first_csv = fcsv or first_csv
     second_csv = scsv or second_csv
 
@@ -53,4 +56,16 @@ def match(
     if debug:
         console.print(f"First CSV content:\n[yellow]{first_csv_content}[/yellow]")
         console.print(f"Second CSV content:\n[yellow]{second_csv_content}[/yellow]")
+
+    print_separator(console)
+    match_counter = 0;
+    for i, first_csv_row in enumerate(first_csv_rows):
+        for j, second_csv_row in enumerate(second_csv_rows):
+            if collections.Counter(first_csv_row) == collections.Counter(second_csv_row):
+                console.print("[bold green]Found matching row:[/bold green]\t[bold yellow]" + f"{separator}".join(first_csv_row) + f"[/bold yellow]\t[bold green]at row {i} of {first_csv}\tand at row {j} of {second_csv}[/bold green]")
+                match_counter += 1
+    print_separator(console)
+
+    console.print(f"[bold green]Found {match_counter} matching rows.[/bold green]")
+    print_separator(console)
 
