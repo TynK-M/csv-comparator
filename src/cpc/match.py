@@ -23,12 +23,6 @@ def match(
         scsv: Annotated[Path | None, typer.Option("-scsv", "--second-csv",
                                                   help="Optional flag to specify the second CSV file")] = None,
         debug: Annotated[bool, typer.Option("-d", "--debug", help="Optional flag to enable debug printing")] = False,
-        no_pre_header: Annotated[bool, typer.Option("-nph", "--no-pre-header",
-                                                    help="Optional flag to specify if there is no pre-header in the CSV files")] = False,
-        no_header: Annotated[bool, typer.Option("-nh", "--no-header",
-                                                help="Optional flag to specify if there is no header in the CSV files")] = False,
-        no_footer: Annotated[bool, typer.Option("-nf", "--no-footer",
-                                                help="Optional flag to specify if there is no footer in the CSV files")] = False,
         separator: Annotated[str, typer.Option("-sep", "--separator",
                                                help="Optional flag to specify the separator used by the CSV files, default to ','")] = ','
 ) -> None:
