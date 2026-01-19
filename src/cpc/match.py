@@ -5,7 +5,11 @@ import collections
 from typing_extensions import Annotated
 from pathlib import Path
 from rich.console import Console
-from .utils.terminal import print_separator
+from rich.panel import Panel
+from rich.table import Table
+from rich.align import Align
+from rich.rule import Rule
+from rich.status import Status
 
 console = Console()
 err_console = Console(stderr=True)
@@ -21,16 +25,14 @@ def match(
         no_footer: Annotated[bool, typer.Option("-nf", "--no-footer", help="Optional flag to specify if there is no footer in the CSV files")] = False,
         separator: Annotated[str, typer.Option("-sep", "--separator", help="Optional flag to specify the separator used by the CSV files, default to ','")] = ','
 ) -> None:
-    print_separator(console)
+    console.print(Rule(style="white"))
     first_csv = fcsv or first_csv
     second_csv = scsv or second_csv
 
     if not first_csv or not second_csv \
         or not os.path.isfile(first_csv) or not os.path.isfile(second_csv):
-        err_console.print("[bold red]Error: you must provide two CSV files, either positionally or via flags[/bold red]")
+        err_console.print(Panel("[white]Error: you must provide two CSV files, either positionally or via flags[/white]", title="Error", title_align="left", style="red"))
         raise typer.Exit(code=1)
-
-    console.print(f"[bold green]Matching `{first_csv}` with `{second_csv}`...[/bold green]")
 
     first_csv_content = ""
     second_csv_content = ""
@@ -50,22 +52,29 @@ def match(
             second_csv_rows.append(row)
 
     if not first_csv_content or not second_csv_content:
-        err_console.print("[bold red]Error: could not match when one of the files is empty[/bold red]")
+        err_console.print(Panel("[white]Error: could not match when one of the files is empty[/bold red]", title="Error", title_align="left", style="red"))
         raise typer.Exit(code=1)
 
     if debug:
         console.print(f"First CSV content:\n[yellow]{first_csv_content}[/yellow]")
         console.print(f"Second CSV content:\n[yellow]{second_csv_content}[/yellow]")
 
-    print_separator(console)
+    matching_status = Status(f"Matching `{first_csv}` with `{second_csv}`")
+
+    match_results = Table(show_lines=True)
+    match_results.add_column(f"Row N°({first_csv})", justify="center")
+    match_results.add_column("Row text", justify="center")
+    match_results.add_column(f"Row N°({second_csv})", justify="center")
+
     match_counter = 0;
+    matching_status.start()
     for i, first_csv_row in enumerate(first_csv_rows):
         for j, second_csv_row in enumerate(second_csv_rows):
             if collections.Counter(first_csv_row) == collections.Counter(second_csv_row):
-                console.print("[bold green]Found matching row:[/bold green]\t[bold yellow]" + f"{separator}".join(first_csv_row) + f"[/bold yellow]\t[bold green]at row {i} of {first_csv}\tand at row {j} of {second_csv}[/bold green]")
+                match_results.add_row(f"{i}", f"{separator}".join(first_csv_row), f"{j}")
                 match_counter += 1
-    print_separator(console)
+    matching_status.stop()
 
-    console.print(f"[bold green]Found {match_counter} matching rows.[/bold green]")
-    print_separator(console)
+    console.print(Panel(Align(match_results, align="center"), subtitle=f"[bold green]Found {match_counter} matching rows.[/bold green]"))
+    console.print(Rule(style="white"))
 
