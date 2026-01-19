@@ -14,24 +14,38 @@ from rich.status import Status
 console = Console()
 err_console = Console(stderr=True)
 
+
 def match(
         first_csv: Annotated[Path, typer.Argument(help="Path to the first CSV file")] = None,
         second_csv: Annotated[Path, typer.Argument(help="Path to the second CSV file")] = None,
-        fcsv: Annotated[Path | None, typer.Option("-fcsv", "--first-csv", help="Optional flag to specify the first CSV file")] = None,
-        scsv: Annotated[Path | None, typer.Option("-scsv", "--second-csv", help="Optional flag to specify the second CSV file")] = None,
+        fcsv: Annotated[Path | None, typer.Option("-fcsv", "--first-csv",
+                                                  help="Optional flag to specify the first CSV file")] = None,
+        scsv: Annotated[Path | None, typer.Option("-scsv", "--second-csv",
+                                                  help="Optional flag to specify the second CSV file")] = None,
         debug: Annotated[bool, typer.Option("-d", "--debug", help="Optional flag to enable debug printing")] = False,
-        no_pre_header: Annotated[bool, typer.Option("-nph", "--no-pre-header", help="Optional flag to specify if there is no pre-header in the CSV files")] = False,
-        no_header: Annotated[bool, typer.Option("-nh", "--no-header", help="Optional flag to specify if there is no header in the CSV files")] = False,
-        no_footer: Annotated[bool, typer.Option("-nf", "--no-footer", help="Optional flag to specify if there is no footer in the CSV files")] = False,
-        separator: Annotated[str, typer.Option("-sep", "--separator", help="Optional flag to specify the separator used by the CSV files, default to ','")] = ','
+        no_pre_header: Annotated[bool, typer.Option("-nph", "--no-pre-header",
+                                                    help="Optional flag to specify if there is no pre-header in the CSV files")] = False,
+        no_header: Annotated[bool, typer.Option("-nh", "--no-header",
+                                                help="Optional flag to specify if there is no header in the CSV files")] = False,
+        no_footer: Annotated[bool, typer.Option("-nf", "--no-footer",
+                                                help="Optional flag to specify if there is no footer in the CSV files")] = False,
+        separator: Annotated[str, typer.Option("-sep", "--separator",
+                                               help="Optional flag to specify the separator used by the CSV files, default to ','")] = ','
 ) -> None:
     console.print(Rule(style="white"))
     first_csv = fcsv or first_csv
     second_csv = scsv or second_csv
 
     if not first_csv or not second_csv \
-        or not os.path.isfile(first_csv) or not os.path.isfile(second_csv):
-        err_console.print(Panel("[white]Error: you must provide two CSV files, either positionally or via flags[/white]", title="Error", title_align="left", style="red"))
+            or not os.path.isfile(first_csv) or not os.path.isfile(second_csv):
+        err_console.print(
+            Panel(
+                "[white]Must provide two CSV files, either positionally or via flags[/white]",
+                title="Error",
+                title_align="left",
+                style="red"
+            )
+        )
         raise typer.Exit(code=1)
 
     first_csv_content = ""
@@ -52,12 +66,26 @@ def match(
             second_csv_rows.append(row)
 
     if not first_csv_content or not second_csv_content:
-        err_console.print(Panel("[white]Error: could not match when one of the files is empty[/bold red]", title="Error", title_align="left", style="red"))
+        err_console.print(
+            Panel(
+                "[white]Could not match when one of the files is empty[/white]",
+                title="Error",
+                title_align="left",
+                style="red"
+            )
+        )
         raise typer.Exit(code=1)
 
     if debug:
-        console.print(f"First CSV content:\n[yellow]{first_csv_content}[/yellow]")
-        console.print(f"Second CSV content:\n[yellow]{second_csv_content}[/yellow]")
+        console.print(
+            Panel(
+                f"[white]First CSV content:\n{first_csv_content}\n\n" +
+                f"Second CSV content:\n{second_csv_content}[/white]",
+                title="Debug",
+                title_align="left",
+                style="yellow"
+            )
+        )
 
     matching_status = Status(f"Matching `{first_csv}` with `{second_csv}`")
 
@@ -75,6 +103,15 @@ def match(
                 match_counter += 1
     matching_status.stop()
 
-    console.print(Panel(Align(match_results, align="center"), subtitle=f"[bold green]Found {match_counter} matching rows.[/bold green]"))
+    console.print(
+        Panel(
+            Align(
+                match_results,
+                align="center"
+            ),
+            title="Matching results",
+            title_align="left",
+            subtitle=f"[bold green]Found {match_counter} matching rows.[/bold green]"
+        )
+    )
     console.print(Rule(style="white"))
-
