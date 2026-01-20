@@ -30,17 +30,7 @@ def match(
     first_csv = fcsv or first_csv
     second_csv = scsv or second_csv
 
-    if not first_csv or not second_csv \
-            or not os.path.isfile(first_csv) or not os.path.isfile(second_csv):
-        err_console.print(
-            Panel(
-                "[white]Must provide two CSV files, either positionally or via flags[/white]",
-                title="Error",
-                title_align="left",
-                style="red"
-            )
-        )
-        raise typer.Exit(code=1)
+    _are_files_provided(first_csv, second_csv)
 
     first_csv_content = ""
     second_csv_content = ""
@@ -59,6 +49,33 @@ def match(
             second_csv_content += f"{separator}".join(row) + "\n"
             second_csv_rows.append(row)
 
+    _are_files_empty(first_csv_content, second_csv_content)
+    _print_debug(first_csv_content, second_csv_content, debug)
+
+    _print_result(
+            first_csv=first_csv,
+            second_csv=second_csv,
+            first_csv_rows=first_csv_rows,
+            second_csv_rows=second_csv_rows,
+            separator=separator
+    )
+    console.print(Rule(style="white"))
+
+def _are_files_provided(first_csv: str, second_csv: str) -> None:
+    if not first_csv or not second_csv \
+            or not os.path.isfile(first_csv) or not os.path.isfile(second_csv):
+        err_console.print(
+            Panel(
+                "[white]Must provide two CSV files, either positionally or via flags[/white]",
+                title="Error",
+                title_align="left",
+                style="red"
+            )
+        )
+        raise typer.Exit(code=1)
+
+
+def _are_files_empty(first_csv_content: str, second_csv_content: str) -> None:
     if not first_csv_content or not second_csv_content:
         err_console.print(
             Panel(
@@ -70,8 +87,11 @@ def match(
         )
         raise typer.Exit(code=1)
 
-    if debug:
-        console.print(
+def _print_debug(first_csv_content: str, second_csv_content: str, debug: bool=False) -> None:
+    if not debug:
+        return
+
+    console.print(
             Panel(
                 f"[white]First CSV content:\n{first_csv_content}\n\n" +
                 f"Second CSV content:\n{second_csv_content}[/white]",
@@ -81,7 +101,9 @@ def match(
             )
         )
 
+def _print_result(first_csv: str, second_csv: str, first_csv_rows: list, second_csv_rows: list, separator: str) -> None:
     matching_status = Status(f"Matching `{first_csv}` with `{second_csv}`")
+    matching_status.start()
 
     match_results = Table(show_lines=True)
     match_results.add_column(f"Row N°({first_csv})", justify="center")
@@ -89,7 +111,6 @@ def match(
     match_results.add_column(f"Row N°({second_csv})", justify="center")
 
     match_counter = 0;
-    matching_status.start()
     for i, first_csv_row in enumerate(first_csv_rows):
         for j, second_csv_row in enumerate(second_csv_rows):
             if collections.Counter(first_csv_row) == collections.Counter(second_csv_row):
@@ -108,4 +129,4 @@ def match(
             subtitle=f"[bold green]Found {match_counter} matching rows.[/bold green]"
         )
     )
-    console.print(Rule(style="white"))
+
