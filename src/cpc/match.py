@@ -31,6 +31,7 @@ def match(
     second_csv = scsv or second_csv
 
     _are_files_provided(first_csv, second_csv)
+    _print_info(first_csv=first_csv, second_csv=second_csv, separator=separator, debug=debug)
 
     first_csv_content = ""
     second_csv_content = ""
@@ -100,6 +101,19 @@ def _print_debug(first_csv_content: str, second_csv_content: str, debug: bool=Fa
                 style="yellow"
             )
         )
+
+def _print_info(first_csv: str, second_csv: str, separator: str, debug: bool) -> None:
+    info = f"First CSV file: [bold]{first_csv}[/bold]\n"                            + \
+           f"Second CSV file: [bold]{second_csv}[/bold]\n"                          + \
+           f"Separator: [bold]{separator}[/bold]\n"                                 + \
+           f"Debug: [bold]{'activated' if debug else 'not activated'}[/bold]\n"
+    console.print(
+        Panel(
+            info,
+            title="Info",
+            title_align="left"
+        )
+    )
 
 def _print_result(first_csv: str, second_csv: str, first_csv_rows: list, second_csv_rows: list, separator: str) -> None:
     matching_status = Status(f"Matching `{first_csv}` with `{second_csv}`")
