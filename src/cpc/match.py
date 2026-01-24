@@ -11,6 +11,9 @@ from rich.align import Align
 from rich.rule import Rule
 from rich.status import Status
 
+"""
+Declaration of the Rich Console and Error Console.
+"""
 console = Console()
 err_console = Console(stderr=True)
 
@@ -26,6 +29,18 @@ def match(
         separator: Annotated[str, typer.Option("-sep", "--separator",
                                                help="Optional flag to specify the separator used by the CSV files, default to ','")] = ','
 ) -> None:
+    """
+    Definition of the CPC command: match.
+
+    Shows the matching parts of two passed CSV files in the terminal using Rich.
+
+    :param first_csv: The first CSV path for the comparation
+    :param second_csv: The second CSV path for the comparation
+    :param fcsv: Optional flag to specify the first CSV path
+    :param scsv: Optional flag to specify the second CSV path
+    :param debug: A boolean representing if the debug mode is activated or not
+    :param separator: The separator used by the CSVs
+    """
     console.print(Rule(style="white"))
     first_csv = fcsv or first_csv
     second_csv = scsv or second_csv
@@ -54,15 +69,22 @@ def match(
     _print_debug(first_csv_content, second_csv_content, debug)
 
     _print_result(
-            first_csv=first_csv,
-            second_csv=second_csv,
-            first_csv_rows=first_csv_rows,
-            second_csv_rows=second_csv_rows,
-            separator=separator
+        first_csv=first_csv,
+        second_csv=second_csv,
+        first_csv_rows=first_csv_rows,
+        second_csv_rows=second_csv_rows,
+        separator=separator
     )
     console.print(Rule(style="white"))
 
+
 def _are_files_provided(first_csv: str, second_csv: str) -> None:
+    """
+    Check method to see if there are two passed files, in negative case the command is interrupted and a Rich Panel for the error is shown.
+
+    :param first_csv: The first CSV path for the comparation
+    :param second_csv: The second CSV path for the comparation
+    """
     if not first_csv or not second_csv \
             or not os.path.isfile(first_csv) or not os.path.isfile(second_csv):
         err_console.print(
@@ -77,6 +99,12 @@ def _are_files_provided(first_csv: str, second_csv: str) -> None:
 
 
 def _are_files_empty(first_csv_content: str, second_csv_content: str) -> None:
+    """
+    Check method to see if the passed files are empty, in case of an empty file the command is interrupted and a Rich Panel for the error is shown.
+
+    :param first_csv_content: The content of the first CSV file
+    :param second_csv_content: The content of the second CSV file
+    """
     if not first_csv_content or not second_csv_content:
         err_console.print(
             Panel(
@@ -88,24 +116,41 @@ def _are_files_empty(first_csv_content: str, second_csv_content: str) -> None:
         )
         raise typer.Exit(code=1)
 
-def _print_debug(first_csv_content: str, second_csv_content: str, debug: bool=False) -> None:
+
+def _print_debug(first_csv_content: str, second_csv_content: str, debug: bool = False) -> None:
+    """
+    Print the debug infos of the matching command as a Rich Panel.
+
+    :param first_csv_content: The content of the first CSV file
+    :param second_csv_content: The content of the second CSV file
+    :param debug: A boolean representing if the debug mode is activated or not
+    """
     if not debug:
         return
 
     console.print(
-            Panel(
-                f"[white]First CSV content:\n{first_csv_content}\n\n" +
-                f"Second CSV content:\n{second_csv_content}[/white]",
-                title="Debug",
-                title_align="left",
-                style="yellow"
-            )
+        Panel(
+            f"[white]First CSV content:\n{first_csv_content}\n\n" +
+            f"Second CSV content:\n{second_csv_content}[/white]",
+            title="Debug",
+            title_align="left",
+            style="yellow"
         )
+    )
+
 
 def _print_info(first_csv: str, second_csv: str, separator: str, debug: bool) -> None:
-    info = f"First CSV file: [bold]{first_csv}[/bold]\n"                            + \
-           f"Second CSV file: [bold]{second_csv}[/bold]\n"                          + \
-           f"Separator: [bold]{separator}[/bold]\n"                                 + \
+    """
+    Print the starting info of the matching command as a Rich Panel.
+
+    :param first_csv: The first CSV path for the comparation
+    :param second_csv: The second CSV path for the comparation
+    :param separator: The separator used by the CSVs
+    :param debug: A boolean representing if the debug mode is activated or not
+    """
+    info = f"First CSV file: [bold]{first_csv}[/bold]\n" + \
+           f"Second CSV file: [bold]{second_csv}[/bold]\n" + \
+           f"Separator: [bold]{separator}[/bold]\n" + \
            f"Debug: [bold]{'activated' if debug else 'not activated'}[/bold]\n"
     console.print(
         Panel(
@@ -115,7 +160,17 @@ def _print_info(first_csv: str, second_csv: str, separator: str, debug: bool) ->
         )
     )
 
+
 def _print_result(first_csv: str, second_csv: str, first_csv_rows: list, second_csv_rows: list, separator: str) -> None:
+    """
+    Print the results of the matching command as a Rich Panel with inside a Table.
+
+    :param first_csv: The first CSV path for the comparation
+    :param second_csv: The second CSV path for the comparation
+    :param first_csv_rows: The rows of the first CSV
+    :param second_csv_rows: The rows of the second CSV
+    :param separator: The separator used by the CSV
+    """
     matching_status = Status(f"Matching `{first_csv}` with `{second_csv}`")
     matching_status.start()
 
@@ -143,4 +198,3 @@ def _print_result(first_csv: str, second_csv: str, first_csv_rows: list, second_
             subtitle=f"[bold green]Found {match_counter} matching rows.[/bold green]"
         )
     )
-
