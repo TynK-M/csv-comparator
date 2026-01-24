@@ -1,8 +1,9 @@
 # IDEs
 .idea
 
-# Tests
+# Local Tests, when creating actual Tests use tests/
 test/
+test.sh
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
