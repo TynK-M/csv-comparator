@@ -130,8 +130,8 @@ def _print_debug(first_csv_content: str, second_csv_content: str, debug: bool = 
 
     console.print(
         Panel(
-            f"[white]First CSV content:\n{first_csv_content}\n\n" +
-            f"Second CSV content:\n{second_csv_content}[/white]",
+            f"[white]First CSV content:\n{first_csv_content.rstrip('\n')}\n\n" +
+            f"Second CSV content:\n{second_csv_content.rstrip('\n')}[/white]",
             title="Debug",
             title_align="left",
             style="yellow"
@@ -151,7 +151,7 @@ def _print_info(first_csv: str, second_csv: str, separator: str, debug: bool) ->
     info = f"First CSV file: [bold]{first_csv}[/bold]\n" + \
            f"Second CSV file: [bold]{second_csv}[/bold]\n" + \
            f"Separator: [bold]{separator}[/bold]\n" + \
-           f"Debug: [bold]{'activated' if debug else 'not activated'}[/bold]\n"
+           f"Debug: [bold]{'activated' if debug else 'not activated'}[/bold]"
     console.print(
         Panel(
             info,
