@@ -30,9 +30,9 @@ def match(
                                                help="Optional flag to specify the separator used by the CSV files, default to ','")] = ','
 ) -> None:
     """
-    Definition of the CPC command: match.
+    Show the matching parts of two passed CSV files in the terminal.
 
-    Shows the matching parts of two passed CSV files in the terminal using Rich.
+    Definition of the CPC command: match.
 
     :param first_csv: The first CSV path for the comparation
     :param second_csv: The second CSV path for the comparation
