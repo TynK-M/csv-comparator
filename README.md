@@ -18,14 +18,10 @@ csv-comparator helps you find an report the points in common between two CSV dat
 
 ## Features
 
+- Match two CSV files
 - Compare two CSV files
 - Output results in human-readable text
 - Designed to integrate easily into scripts or run from the command line
-
-Future features:
-
-- Option to compare the header differencies
-- Option to compare the footer differencies
 
 ## Requirements
 
